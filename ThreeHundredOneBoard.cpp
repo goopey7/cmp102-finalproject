@@ -33,11 +33,8 @@ int ThreeHundredOneBoard::placeDart(std::string& playerName, int successRate, in
 		{
 			hitVal = ptsWanted;
 		}
-		else if (r <= successRate + 10)
-		{
-			hitVal = 50;
-		}
-		else
+		// you're more likely to miss completely if your successRate is low
+		else if(r <= successRate + successRate*.5f)
 		{
 			hitVal = rand() % 20 + 1;
 		}
@@ -49,8 +46,8 @@ int ThreeHundredOneBoard::placeDart(std::string& playerName, int successRate, in
 		{
 			hitVal = ptsWanted;
 		}
-		// you hit a neighbor
-		else if(r <= successRate + 10)
+		// more likely to hit a neighbor if you have high accuracy
+		else if(r <= successRate + .1f * successRate)
 		{
 			// coin flip
 			bool bIsHeads = rand() % 2;
@@ -62,7 +59,7 @@ int ThreeHundredOneBoard::placeDart(std::string& playerName, int successRate, in
 				hitVal = (*neighbors)[1][ptsWanted];
 		}
 		// you hit a random target on the board
-		else if (r <= successRate + 15)
+		else if (r <= successRate + successRate * .5f)
 		{
 			hitVal = rand() % 20 + 1;
 		}

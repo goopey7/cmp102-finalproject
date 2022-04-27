@@ -5,9 +5,9 @@
 
 int main()
 {
-	Player sid("Sid",70);
-	Player joe("Joe",60);
+	Player sid("Sid",50);
+	Player joe("Joe",50);
 	Game game(&sid,&joe,GameType::ThreeHundredOne,0,true);
-	game.play();
+	game.simulate();
 	return 0;
 }

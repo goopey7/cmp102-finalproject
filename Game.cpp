@@ -49,9 +49,27 @@ void Game::simulate()
 	Player* p1 = (bP1First) ? players.first : players.second;
 	Player* p2 = (!bP1First) ? players.first : players.second;
 
+	bool bP1Turn = true;
 	while(!board->isGameOver())
 	{
+		Player* currentPlayer = (bP1Turn) ? p1 : p2;
+
+		// AI LOGIC
+		// sometimes it'll go for 20s, sometimes bullseyes. Most effective way to knock pts down imo
+		int desiredTarget;
+		bool bCoinFlip = rand() % 2;
+		if(bCoinFlip)
+			desiredTarget = 25;
+		else desiredTarget = 20;
+
+
+		std::cout << currentPlayer->getName() << " is going for a " << desiredTarget << '\n';
+		std::cout << currentPlayer->getName() << " hit a " << currentPlayer->throwDart(desiredTarget) << "!\n";
+		bP1Turn = !bP1Turn;
 	}
+	std::cout << "\n***************************************************\n";
+	std::cout << "WINNER: " << board->getWinner();
+	std::cout << "\n***************************************************\n";
 }
 
 void Game::play()
