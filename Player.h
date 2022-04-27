@@ -1,0 +1,26 @@
+//Copyright Sam Collier 2022
+#pragma once
+#include <string>
+#include <vector>
+
+#include "DartBoard.h"
+
+class Player
+{
+	public:
+		Player(const std::string& name, int successRate);
+		~Player();
+
+		int throwDart(int desiredPoints);
+		int getWins();
+		int getPointsInCurrentGame();
+		void newGame(DartBoard* board);
+		const std::string& getName() const;
+
+	private:
+		std::string name;
+		int successRate;
+		DartBoard* currentBoard = nullptr;
+		std::vector<DartBoard*> boardsPlayed;
+};
+

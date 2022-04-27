@@ -10,6 +10,6 @@ class ThreeHundredOneBoard : public DartBoard
 		ThreeHundredOneBoard(const std::string& player1, const std::string& player2);
 		~ThreeHundredOneBoard();
 
-		virtual void placeDart(std::string& playerName, int successRate, int ptsWanted) override;
+		virtual int placeDart(std::string& playerName, int successRate, int ptsWanted) override;
 };
 

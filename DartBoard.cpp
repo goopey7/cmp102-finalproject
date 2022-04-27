@@ -4,14 +4,16 @@
 
 DartBoard::DartBoard(const std::string& player1, const std::string& player2)
 {
+	hitList = new std::map<std::string,std::map<int,int>>();
+	auto hits = *hitList;
 	// set all targets hit to 0 (players haven't hit anything)
-	for(int i=0; i<targets.size(); i++)
+	for(int i=1; i<(*neighbors)[0].size(); i++)
 	{
-		hits[player1][targets[i]] = 0;
+		hits[player1][(*neighbors)[0][i]] = 0;
 		hits[player1][25]=0;
 		hits[player1][50]=0;
 
-		hits[player2][targets[i]] = 0;
+		hits[player2][(*neighbors)[0][i]] = 0;
 		hits[player2][25]=0;
 		hits[player2][50]=0;
 	}
@@ -19,13 +21,12 @@ DartBoard::DartBoard(const std::string& player1, const std::string& player2)
 	// initialize random seed
 	srand(time(0));
 }
-
 int DartBoard::getPlayerPoints(std::string& playerName)
 {
 	int total = gameType;
-	for(std::pair<int,int> target : hits[playerName])
+	for(auto target : (*hitList)[playerName])
 	{
-		total -= target.second;
+		total -= target.first * target.second;
 	}
 
 	if(total <= 0)
@@ -44,7 +45,13 @@ GameType DartBoard::getGameType() const
 	return gameType;
 }
 
-void DartBoard::placeDart(std::string& playerName, int successRate, int ptsWanted)
+int DartBoard::placeDart(std::string& playerName, int successRate, int ptsWanted)
 {
+	return -1;
+}
+
+const std::string& DartBoard::getWinner() const
+{
+	return winner;
 }
 

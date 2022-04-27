@@ -12,18 +12,18 @@ class DartBoard
 		DartBoard(const std::string& player1, const std::string& player2);
 		~DartBoard() = default;
 
-		virtual void placeDart(std::string& playerName, int successRate, int ptsWanted);
+		virtual int placeDart(std::string& playerName, int successRate, int ptsWanted);
 		
 		int getPlayerPoints(std::string& playerName);
 		bool isGameOver() const;
-
 		GameType getGameType() const;
+		const std::string& getWinner() const;
 
 	protected:
 		GameType gameType;
-		std::vector<std::vector<int>> neighbors;
-		std::vector<int> targets;
-		std::map<std::string,std::map<int,int>> hits;
+		std::vector<std::vector<int>>* neighbors;
+		std::map<std::string,std::map<int,int>>* hitList;
 		bool bGameOver = false;
+		std::string winner;
 };
 
