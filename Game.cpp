@@ -55,13 +55,20 @@ void Game::simulate()
 		Player* currentPlayer = (bP1Turn) ? p1 : p2;
 
 		// AI LOGIC
-		// sometimes it'll go for 20s, sometimes bullseyes. Most effective way to knock pts down imo
 		int desiredTarget;
-		bool bCoinFlip = rand() % 2;
-		if(bCoinFlip)
-			desiredTarget = 25;
-		else desiredTarget = 20;
 
+		if(currentPlayer->getPointsInCurrentGame() > 25)
+		{
+			// sometimes it'll go for 20s, sometimes bullseyes. Most effective way to knock pts down imo
+			bool bCoinFlip = rand() % 2;
+			if(bCoinFlip)
+				desiredTarget = 25;
+			else desiredTarget = 20;
+		}
+		else
+		{
+			desiredTarget = currentPlayer->getPointsInCurrentGame();
+		}
 
 		std::cout << currentPlayer->getName() << " is going for a " << desiredTarget << '\n';
 		std::cout << currentPlayer->getName() << " hit a " << currentPlayer->throwDart(desiredTarget) << "!\n";

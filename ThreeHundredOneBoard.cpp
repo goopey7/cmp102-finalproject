@@ -65,11 +65,15 @@ int ThreeHundredOneBoard::placeDart(std::string& playerName, int successRate, in
 		}
 		// Otherwise player has missed the board entirely and there's nothing to do
 	}
-	(*hitList)[playerName][hitVal]++;
-	if(getPlayerPoints(playerName) <= 0)
+	int newScore = getPlayerPoints(playerName) - hitVal;
+	if(newScore == 0)
 	{
 		bGameOver = true;
 		winner = playerName;
+	}
+	if(newScore >= 0)
+	{
+		(*hitList)[playerName][hitVal]++;
 	}
 	return hitVal;
 }
