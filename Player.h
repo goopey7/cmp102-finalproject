@@ -8,10 +8,10 @@
 class Player
 {
 	public:
-		Player(const std::string& name, int successRate);
+		Player(const std::string& name, int accuracy);
 		~Player();
 
-		int throwDart(int desiredPoints);
+		int throwDart(int desiredPoints, Zone desiredZone);
 		int getWins();
 		int getPointsInCurrentGame();
 		void newGame(DartBoard* board);

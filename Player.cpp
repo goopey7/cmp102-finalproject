@@ -2,8 +2,8 @@
 
 #include "Player.h"
 
-Player::Player(const std::string& name, int successRate)
-	: name(name),successRate(successRate)
+Player::Player(const std::string& name, int accuracy)
+	: name(name),successRate(accuracy)
 {
 }
 
@@ -11,7 +11,7 @@ Player::~Player()
 {
 }
 
-int Player::throwDart(int desiredPoints)
+int Player::throwDart(int desiredPoints, Zone desiredZone)
 {
 	return currentBoard->placeDart(name,successRate,desiredPoints);
 }

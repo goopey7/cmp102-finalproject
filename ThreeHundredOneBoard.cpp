@@ -18,23 +18,28 @@ ThreeHundredOneBoard::ThreeHundredOneBoard(const std::string& player1, const std
 
 ThreeHundredOneBoard::~ThreeHundredOneBoard()
 {
+	delete neighbors;
 }
 
-int ThreeHundredOneBoard::placeDart(std::string& playerName, int successRate, int ptsWanted)
+int ThreeHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone)
 {
+	// Random number between 1 and 100 inclusive
 	int r = rand() % 100 + 1;
 
+	// 0 means that you've missed the board
 	int hitVal = 0;
 
 	// if a bullseye is desired
-	if(ptsWanted == 25)
+	if(zone == Zone::Bullseye)
 	{
-		if(r <= successRate - 10)
+		// a bit harder to hit the bullseye
+		if(r <= accuracy - 10)
 		{
-			hitVal = ptsWanted;
+			hitVal = 50;
 		}
-		// you're more likely to miss completely if your successRate is low
-		else if(r <= successRate + successRate*.5f)
+
+		// you're more likely to miss the board completely than hit a target if your successRate is low
+		else if(r <= accuracy + accuracy*.5f)
 		{
 			hitVal = rand() % 20 + 1;
 		}
@@ -42,36 +47,39 @@ int ThreeHundredOneBoard::placeDart(std::string& playerName, int successRate, in
 	else
 	{
 		// you get what you want
-		if(r <= successRate)
+		if(r <= accuracy)
 		{
-			hitVal = ptsWanted;
+			hitVal = wantedNumber;
 		}
 		// more likely to hit a neighbor if you have high accuracy
-		else if(r <= successRate + .1f * successRate)
+		else if(r <= accuracy + .1f * accuracy)
 		{
 			// coin flip
-			bool bIsHeads = rand() % 2;
+			bool bGoLeft = rand() % 2;
 
 			// hit left neighbor
-			if(bIsHeads)
-				hitVal = (*neighbors)[0][ptsWanted];
+			if(bGoLeft)
+				hitVal = (*neighbors)[0][wantedNumber];
 			else // hit right neighbor
-				hitVal = (*neighbors)[1][ptsWanted];
+				hitVal = (*neighbors)[1][wantedNumber];
 		}
 		// you hit a random target on the board
-		else if (r <= successRate + successRate * .5f)
+		else if (r <= accuracy + accuracy * .5f)
 		{
 			hitVal = rand() % 20 + 1;
 		}
 		// Otherwise player has missed the board entirely and there's nothing to do
 	}
 	int newScore = getPlayerPoints(playerName) - hitVal;
-	if(newScore == 0)
+
+	// score cannot go below 50. Has to go from 50 to 0 with a bullseye
+	if(newScore == 0 && hitVal == 50)
 	{
 		bGameOver = true;
 		winner = playerName;
 	}
-	if(newScore >= 0)
+	// if our new score is above 50, update it
+	if(newScore >= 50)
 	{
 		(*hitList)[playerName][hitVal]++;
 	}

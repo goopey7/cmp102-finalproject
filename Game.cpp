@@ -56,22 +56,40 @@ void Game::simulate()
 
 		// AI LOGIC
 		int desiredTarget;
+		Zone desiredZone = Zone::Single;
 
-		if(currentPlayer->getPointsInCurrentGame() > 25)
+		if(currentPlayer->getPointsInCurrentGame() > 100)
 		{
 			// sometimes it'll go for 20s, sometimes bullseyes. Most effective way to knock pts down imo
 			bool bCoinFlip = rand() % 2;
 			if(bCoinFlip)
-				desiredTarget = 25;
+			{
+				desiredTarget = 50;
+				desiredZone = Zone::Bullseye;
+			}
 			else desiredTarget = 20;
 		}
-		else
+		else if(currentPlayer->getPointsInCurrentGame() > 70)
 		{
-			desiredTarget = currentPlayer->getPointsInCurrentGame();
+			desiredTarget = 20;
+		}
+		else if(currentPlayer->getPointsInCurrentGame() > 50 && currentPlayer->getPointsInCurrentGame() <= 70)
+		{
+			desiredTarget = currentPlayer->getPointsInCurrentGame() - 50;
+		}
+		else if(currentPlayer->getPointsInCurrentGame() == 50)
+		{
+			desiredTarget = 50;
+			desiredZone = Zone::Bullseye;
 		}
 
+		std::cout << "\n===========================================================================\n";
+		std::cout << currentPlayer->getName() << " has " << currentPlayer->getPointsInCurrentGame() << '\n';
 		std::cout << currentPlayer->getName() << " is going for a " << desiredTarget << '\n';
-		std::cout << currentPlayer->getName() << " hit a " << currentPlayer->throwDart(desiredTarget) << "!\n";
+		int result = currentPlayer->throwDart(desiredTarget,desiredZone);
+		std::cout << currentPlayer->getName() << " hit a " << result << "!\n";
+		std::cout << currentPlayer->getName() << " now has " << currentPlayer->getPointsInCurrentGame() << '\n';
+		std::cout << "\n===========================================================================\n";
 		bP1Turn = !bP1Turn;
 	}
 	std::cout << "\n***************************************************\n";
@@ -87,6 +105,7 @@ void Game::play()
 	bool bP1Turn = true;
 	while(!board->isGameOver())
 	{
+		Zone desiredZone = Zone::Single;
 		Player* currentPlayer = (bP1Turn) ? p1 : p2;
 		std::cout << "\n===================================================\n";
 		std::cout << "Current Player: " << currentPlayer->getName() << '\n';
@@ -95,7 +114,9 @@ void Game::play()
 		std::cout << "<Enter desired target> : ";
 		int desiredTarget;
 		std::cin >> desiredTarget;
-		std::cout << currentPlayer->getName() << " hit a " << currentPlayer->throwDart(desiredTarget) << "!\n";
+		if(desiredTarget == 50)
+			desiredZone = Zone::Bullseye;
+		std::cout << currentPlayer->getName() << " hit a " << currentPlayer->throwDart(desiredTarget,desiredZone) << "!\n";
 		bP1Turn = !bP1Turn;
 	}
 	std::cout << "\n***************************************************\n";
