@@ -45,7 +45,7 @@ GameType DartBoard::getGameType() const
 	return gameType;
 }
 
-int DartBoard::placeDart(std::string& playerName, int successRate, int ptsWanted)
+int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone)
 {
 	return -1;
 }

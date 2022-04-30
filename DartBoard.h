@@ -6,13 +6,21 @@
 
 #include "GameType.h"
 
+enum Zone
+{
+	Bullseye=0,
+	Single=1,
+	Double=2,
+	Treble=3
+};
+
 class DartBoard
 {
 	public:
 		DartBoard(const std::string& player1, const std::string& player2);
 		~DartBoard() = default;
 
-		virtual int placeDart(std::string& playerName, int successRate, int ptsWanted);
+		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single);
 		
 		int getPlayerPoints(std::string& playerName);
 		bool isGameOver() const;
