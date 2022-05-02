@@ -6,6 +6,8 @@
 #include <iostream>
 
 #include "ThreeHundredOneBoard.h"
+#include "FiveHundredOneBoard.h"
+
 #include "Player.h"
 
 class Game
@@ -18,7 +20,7 @@ class Game
 		int getID() const;
 		DartBoard* getBoard() const;
 
-		void simulate();
+		void simulate(GameType gameType);
 		void play();
 
 	private:

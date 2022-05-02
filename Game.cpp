@@ -14,7 +14,7 @@ Game::Game(Player* p1, Player* p2, GameType type, int id, bool p1First)
 			board = new ThreeHundredOneBoard(p1->getName(),p2->getName());
 			break;
 		case FiveHundredOne:
-			// TODO INITIALIZE 501 BOARD
+			board = new FiveHundredOneBoard(p1->getName(), p2->getName());
 			break;
 	}
 
@@ -44,7 +44,7 @@ const std::string& Game::getWinner() const
 	return winner;
 }
 
-void Game::simulate()
+void Game::simulate(GameType gameType)
 {
 	Player* p1 = (bP1First) ? players.first : players.second;
 	Player* p2 = (!bP1First) ? players.first : players.second;
@@ -58,31 +58,57 @@ void Game::simulate()
 		int desiredTarget;
 		Zone desiredZone = Zone::Single;
 
-		if(currentPlayer->getPointsInCurrentGame() > 100)
+		// 301 AI
+		if(gameType == GameType::ThreeHundredOne)
 		{
-			// sometimes it'll go for 20s, sometimes bullseyes. Most effective way to knock pts down imo
-			bool bCoinFlip = rand() % 2;
-			if(bCoinFlip)
+
+			if(currentPlayer->getPointsInCurrentGame() > 100)
+			{
+				// sometimes it'll go for 20s, sometimes bullseyes. Most effective way to knock pts down imo
+				bool bCoinFlip = rand() % 2;
+				if(bCoinFlip)
+				{
+					desiredTarget = 50;
+					desiredZone = Zone::Bullseye;
+				}
+				else desiredTarget = 20;
+			}
+			else if(currentPlayer->getPointsInCurrentGame() > 70)
+			{
+				desiredTarget = 20;
+			}
+			else if(currentPlayer->getPointsInCurrentGame() > 50 && currentPlayer->getPointsInCurrentGame() <= 70)
+			{
+				desiredTarget = currentPlayer->getPointsInCurrentGame() - 50;
+			}
+			else if(currentPlayer->getPointsInCurrentGame() == 50)
 			{
 				desiredTarget = 50;
 				desiredZone = Zone::Bullseye;
 			}
-			else desiredTarget = 20;
 		}
-		else if(currentPlayer->getPointsInCurrentGame() > 70)
+		// 501 AI
+		else if(gameType == GameType::FiveHundredOne)
 		{
-			desiredTarget = 20;
-		}
-		else if(currentPlayer->getPointsInCurrentGame() > 50 && currentPlayer->getPointsInCurrentGame() <= 70)
-		{
-			desiredTarget = currentPlayer->getPointsInCurrentGame() - 50;
-		}
-		else if(currentPlayer->getPointsInCurrentGame() == 50)
-		{
-			desiredTarget = 50;
-			desiredZone = Zone::Bullseye;
-		}
+			std::vector<int>* p1Throws = new std::vector<int>();
+			std::vector<int>* p2Throws = new std::vector<int>();
 
+			if(currentPlayer->getPointsInCurrentGame() > 100)
+			{
+				bool bGoForSpecialZone = rand() % 2;
+				if(bGoForSpecialZone)
+				{
+					bool bGoForDouble = rand() % 2;
+					if(bGoForDouble)
+						desiredZone = Zone::Double;
+					else desiredZone = Zone::Treble;
+				}
+			}
+
+			delete p1Throws;
+			delete p2Throws;
+		}
+		
 		std::cout << "\n===========================================================================\n";
 		std::cout << currentPlayer->getName() << " has " << currentPlayer->getPointsInCurrentGame() << '\n';
 		std::cout << currentPlayer->getName() << " is going for a " << desiredTarget << '\n';
