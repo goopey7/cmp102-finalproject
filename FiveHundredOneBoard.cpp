@@ -38,6 +38,14 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 			else
 				hitVal = 25; // hit outer bullseye
 		}
+		else if(r <= accuracy - 14)
+		{
+			// have missed our bullseye but hit other bullseye instead
+			if(zone == Zone::Bullseye)
+				hitVal = 25;
+			else
+				hitVal = 50;
+		}
 
 		// you're more likely to miss the board completely than hit a target if your successRate is low
 		else if(r <= accuracy + accuracy*.5f)
