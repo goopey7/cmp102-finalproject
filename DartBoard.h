@@ -8,19 +8,20 @@
 
 enum Zone
 {
+	OuterBullseye=-1,
 	Bullseye=0,
 	Single=1,
 	Double=2,
-	Treble=3
+	Treble=3,
 };
 
 class DartBoard
 {
 	public:
 		DartBoard(const std::string& player1, const std::string& player2);
-		~DartBoard() = default;
+		~DartBoard();
 
-		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single);
+		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single, std::vector<int>* throws = nullptr);
 		
 		int getPlayerPoints(std::string& playerName);
 		bool isGameOver() const;

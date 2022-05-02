@@ -11,7 +11,7 @@ class Player
 		Player(const std::string& name, int accuracy);
 		~Player();
 
-		int throwDart(int desiredPoints, Zone desiredZone);
+		int throwDart(int desiredPoints, Zone desiredZone, std::vector<int>* throws = nullptr);
 		int getWins();
 		int getPointsInCurrentGame();
 		void newGame(DartBoard* board);

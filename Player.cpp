@@ -11,9 +11,12 @@ Player::~Player()
 {
 }
 
-int Player::throwDart(int desiredPoints, Zone desiredZone)
+int Player::throwDart(int desiredPoints, Zone desiredZone, std::vector<int>* throws)
 {
-	return currentBoard->placeDart(name,successRate,desiredPoints);
+	if(throws == nullptr)
+		return currentBoard->placeDart(name,successRate,desiredPoints,desiredZone);
+	else
+		return currentBoard->placeDart(name,successRate,desiredPoints,desiredZone,throws);
 }
 
 void Player::newGame(DartBoard* board)

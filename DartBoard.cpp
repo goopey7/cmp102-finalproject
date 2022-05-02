@@ -45,7 +45,7 @@ GameType DartBoard::getGameType() const
 	return gameType;
 }
 
-int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone)
+int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, std::vector<int>* throws)
 {
 	return -1;
 }
@@ -53,5 +53,11 @@ int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber
 const std::string& DartBoard::getWinner() const
 {
 	return winner;
+}
+
+DartBoard::~DartBoard()
+{
+	delete neighbors;
+	delete hitList;
 }
 
