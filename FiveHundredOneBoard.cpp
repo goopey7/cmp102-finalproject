@@ -2,6 +2,7 @@
 
 #include "FiveHundredOneBoard.h"
 
+#include <iostream>
 
 DartBoard FiveHundredOneBoard::initializeTargetsAndNeighbors(const std::string& player1, const std::string& player2)
 {
@@ -19,7 +20,7 @@ FiveHundredOneBoard::FiveHundredOneBoard(const std::string& player1, const std::
 {
 }
 
-int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, ThrowError* error,std::vector<int>* throws)
+int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<int>* throws)
 {
 	*error = ThrowError::None;
 	// Random number between 1 and 100 inclusive
@@ -59,7 +60,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 			else if(oneInTen == 1)
 				newZone = Zone::Treble;
 
-			hitVal = newZone * (rand() % 20 + 1);
+			hitVal = (rand() % 20 + 1);
 			zone = newZone;
 		}
 	}
@@ -68,7 +69,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 		// you get what you want
 		if(r <= accuracy)
 		{
-			hitVal = zone * wantedNumber;
+			hitVal = wantedNumber;
 		}
 		// more likely to hit a neighbor if you have high accuracy
 		else if(r <= accuracy + .1f * accuracy)
@@ -116,7 +117,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 				else // hit right neighbor
 					newNumber = (*neighbors)[1][wantedNumber];
 			}
-			hitVal = newZone * newNumber;
+			hitVal = newNumber;
 			zone = newZone;
 		}
 		// you hit a random target on the board
@@ -124,16 +125,16 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 		{
 			// one in ten chance of getting either a treble or a double
 			Zone newZone = (rand() % 10 == 0) ? ((rand() % 2) ? Zone::Treble : Zone::Double) : Zone::Single;
-			hitVal = newZone * (rand() % 20 + 1);
+			hitVal = (rand() % 20 + 1);
 			zone = newZone;
 		}
 		// Otherwise player has missed the board entirely and there's nothing to do
 	}
-	int newScore = getPlayerPoints(playerName) - hitVal;
-	
+	int newScore = getPlayerPoints(playerName) - hitVal*zone;
+	*hitZone = zone;
 	if(newScore > 1)
 	{
-		(*hitList)[playerName][hitVal]++;
+		(*hitList)[playerName][hitVal*zone]++;
 	}
 	else if(newScore == 0)
 	{
@@ -143,7 +144,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 		}
 		else // player can reach zero fine, so apply it to the score
 		{
-			(*hitList)[playerName][hitVal]++;
+			(*hitList)[playerName][hitVal*zone]++;
 		}
 	}
 	else if(newScore < 0)
@@ -162,20 +163,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 		winner = playerName;
 	}
 
-	if(throws->size() == 3)
-		throws->clear();
 	throws->push_back(hitVal);
-
-	if(throws->size() == 3 && hitVal < 0)
-	{
-		for(int round : *throws)
-		{
-			// Undo last three throws if player is left with odd number or has gone below zero
-			(*hitList)[playerName][round]--;
-		}
-		throws->clear();
-	}
-
 	return hitVal;
 }
 

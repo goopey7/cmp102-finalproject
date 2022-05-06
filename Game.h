@@ -30,5 +30,6 @@ class Game
 		int id;
 		DartBoard* board;
 		bool bP1First = true;
+		std::string zoneToString(Zone zoneIn);
 };
 

@@ -144,27 +144,41 @@ void Game::simulate(GameType gameType)
 					desiredZone = Zone::Single;
 					desiredTarget = 20;
 				}
-				else if(currentPlayer->getPointsInCurrentGame() <= 20)
+				else if(currentPlayer->getPointsInCurrentGame() <= 20 && currentPlayer->getPointsInCurrentGame() > 10)
 				{
-					desiredZone = Zone::Single;
+					desiredZone = Zone::Double;
 					desiredTarget = board->getClosestTarget(currentPlayer->getPointsInCurrentGame());
 				}
+				else if(currentPlayer->getPointsInCurrentGame() <= 10)
+				{
+					desiredZone = Zone::Double;
+					desiredTarget = board->getClosestTarget(currentPlayer->getPointsInCurrentGame()/2);
+				}
 
-				result = currentPlayer->throwDart(desiredTarget,desiredZone,pThrows,error);
+				Zone* hitZone = new Zone();
+				result = currentPlayer->throwDart(desiredTarget,desiredZone,hitZone,pThrows,error);
 				// resulting output
 				if(desiredZone != Zone::Bullseye)
-					std::cout << currentPlayer->getName() << " is going for a " << desiredTarget << '\n';
+					std::cout << currentPlayer->getName() << " is going for a " << zoneToString(desiredZone) << " " << desiredTarget << '\n';
 				else
 					std::cout << currentPlayer->getName() << " is going for a bullseye!\n";
-				std::cout << currentPlayer->getName() << " hit a " << result << "!\n";
+				std::cout << currentPlayer->getName() << " hit a " << zoneToString(*hitZone) << " " << result << "!\n";
 				if(*error == ThrowError::SurpassedZero)
 					std::cout << currentPlayer->getName() << " has surpassed 0 points. Bust!\n";
 				else if(*error == ThrowError::ImpossibleToFinish)
 					std::cout << currentPlayer->getName() << " can't score a double at the end!\n";
 				else if(*error == ThrowError::NotEndOnDouble)
 					std::cout << currentPlayer->getName() << " did not finish with a double or bullseye!\n";
+				bool bBreakLoop = *error != ThrowError::None || currentPlayer->getPointsInCurrentGame() == 0;
+				delete hitZone;
 				delete error;
+				if(bBreakLoop)
+					break;
 			}
+			int totalScored = 0;
+			for(int score : *pThrows)
+				totalScored+=score;
+			std::cout << currentPlayer->getName() << " scored " << totalScored << '\n';
 			pThrows->clear();
 			delete pThrows;
 		}
@@ -202,5 +216,28 @@ void Game::play()
 	std::cout << "\n***************************************************\n";
 	std::cout << "WINNER: " << board->getWinner();
 	std::cout << "\n***************************************************\n";
+}
+
+std::string Game::zoneToString(Zone zoneIn)
+{
+	switch(zoneIn)
+	{
+		case Zone::Bullseye:
+			return "bullseye";
+			break;
+		case Zone::Double:
+			return "double";
+			break;
+		case Zone::Single:
+			return "single";
+			break;
+		case Zone::Treble:
+			return "treble";
+			break;
+		case Zone::OuterBullseye:
+			return "outer bullseye";
+			break;
+	}
+	return "";
 }
 
