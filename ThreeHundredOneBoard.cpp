@@ -18,7 +18,7 @@ ThreeHundredOneBoard::ThreeHundredOneBoard(const std::string& player1, const std
 {
 }
 
-int ThreeHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, std::vector<int>* throws)
+int ThreeHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, ThrowError* error,std::vector<int>* throws)
 {
 	// Random number between 1 and 100 inclusive
 	int r = rand() % 100 + 1;

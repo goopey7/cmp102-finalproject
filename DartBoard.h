@@ -15,18 +15,28 @@ enum Zone
 	Treble=3,
 };
 
+enum ThrowError
+{
+	None,
+	SurpassedZero,
+	NotEndOnDouble,
+	ImpossibleToFinish,
+};
+
 class DartBoard
 {
 	public:
 		DartBoard(const std::string& player1, const std::string& player2);
 		~DartBoard();
 
-		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single, std::vector<int>* throws = nullptr);
+		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single, ThrowError* error = nullptr,std::vector<int>* throws = nullptr);
 		
 		int getPlayerPoints(std::string& playerName);
 		bool isGameOver() const;
 		GameType getGameType() const;
 		const std::string& getWinner() const;
+		std::vector<std::vector<int>>* getNeighbors() const;
+		int getClosestTarget(int numToCheck) const;
 
 	protected:
 		GameType gameType;

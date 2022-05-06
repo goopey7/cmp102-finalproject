@@ -45,7 +45,7 @@ GameType DartBoard::getGameType() const
 	return gameType;
 }
 
-int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, std::vector<int>* throws)
+int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, ThrowError* error,std::vector<int>* throws)
 {
 	return -1;
 }
@@ -59,5 +59,28 @@ DartBoard::~DartBoard()
 {
 	delete neighbors;
 	delete hitList;
+}
+
+std::vector<std::vector<int>>* DartBoard::getNeighbors() const
+{
+	return neighbors;
+}
+
+int DartBoard::getClosestTarget(int numToCheck) const
+{
+	int bestNum = INT32_MAX;
+	int bestNumDiff = INT32_MAX;
+	for(int i=1;i<neighbors->at(0).size();i++)
+	{
+		int targetNum = (*neighbors)[0][i];
+		int difference = abs(numToCheck - targetNum);
+
+		if(difference == 0)
+			return targetNum;
+
+		if(difference < bestNumDiff)
+			bestNum = targetNum;
+	}
+	return bestNum;
 }
 

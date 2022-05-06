@@ -57,6 +57,10 @@ void Game::simulate(GameType gameType)
 		// AI LOGIC
 		int desiredTarget;
 		Zone desiredZone = Zone::Single;
+		int result;
+
+		std::cout << "\n===========================================================================\n";
+		std::cout << currentPlayer->getName() << " has " << currentPlayer->getPointsInCurrentGame() << '\n';
 
 		// 301 AI
 		if(gameType == GameType::ThreeHundredOne)
@@ -79,41 +83,91 @@ void Game::simulate(GameType gameType)
 			}
 			else if(currentPlayer->getPointsInCurrentGame() > 50 && currentPlayer->getPointsInCurrentGame() <= 70)
 			{
-				desiredTarget = currentPlayer->getPointsInCurrentGame() - 50;
+				desiredTarget = board->getClosestTarget(currentPlayer->getPointsInCurrentGame()-50);
 			}
 			else if(currentPlayer->getPointsInCurrentGame() == 50)
 			{
 				desiredTarget = 50;
 				desiredZone = Zone::Bullseye;
 			}
+			result = currentPlayer->throwDart(desiredTarget,desiredZone);
+			std::cout << currentPlayer->getName() << " is going for a " << desiredTarget << '\n';
+			std::cout << currentPlayer->getName() << " hit a " << result << "!\n";
 		}
 		// 501 AI
 		else if(gameType == GameType::FiveHundredOne)
 		{
-			std::vector<int>* p1Throws = new std::vector<int>();
-			std::vector<int>* p2Throws = new std::vector<int>();
-
-			if(currentPlayer->getPointsInCurrentGame() > 100)
+			std::vector<int>* pThrows = new std::vector<int>();
+			for(int i=0;i<3;i++)
 			{
-				bool bGoForSpecialZone = rand() % 2;
-				if(bGoForSpecialZone)
+				ThrowError* error = new ThrowError();
+				if(currentPlayer->getPointsInCurrentGame() > 100)
 				{
-					bool bGoForDouble = rand() % 2;
-					if(bGoForDouble)
-						desiredZone = Zone::Double;
-					else desiredZone = Zone::Treble;
-				}
-			}
+					desiredZone = Zone::Single;
+					desiredTarget = 0;
+					bool bGoForSpecialZone = rand() % 2;
+					if(bGoForSpecialZone)
+					{
+						bool bGoForDouble = rand() % 2;
+						if(bGoForDouble)
+							desiredZone = Zone::Double;
+						else desiredZone = Zone::Treble;
+					}
 
-			delete p1Throws;
-			delete p2Throws;
+					// sometimes scratch that idea and go for bullseye instead
+					bool bGoForBullseyeInstead = rand() % 4 == 0;
+					if(bGoForBullseyeInstead)
+						desiredZone = Zone::Bullseye;
+					desiredTarget = 20;
+				}
+				else if(currentPlayer->getPointsInCurrentGame() > 52)
+				{
+					// aim for the bullseye and hope for the best
+					desiredZone = Zone::Bullseye;
+
+					bool bMaybeTryDouble = rand() % 6 == 0;
+					if(bMaybeTryDouble)
+					{
+						desiredZone = Zone::Double;
+						while(desiredTarget == 0)
+							desiredTarget = (*board->getNeighbors())[0][rand() % (*board->getNeighbors())[0].size()];
+					}
+				}
+				// we're in the endgame and we want to hit zero with a double or bullseye
+				else if(currentPlayer->getPointsInCurrentGame() == 50 || currentPlayer->getPointsInCurrentGame() == 52) 
+				{
+					desiredZone = Zone::Bullseye;
+					desiredTarget = 50;
+				}
+				else if(currentPlayer->getPointsInCurrentGame() < 50 && currentPlayer->getPointsInCurrentGame() > 20)
+				{
+					desiredZone = Zone::Single;
+					desiredTarget = 20;
+				}
+				else if(currentPlayer->getPointsInCurrentGame() <= 20)
+				{
+					desiredZone = Zone::Single;
+					desiredTarget = board->getClosestTarget(currentPlayer->getPointsInCurrentGame());
+				}
+
+				result = currentPlayer->throwDart(desiredTarget,desiredZone,pThrows,error);
+				// resulting output
+				if(desiredZone != Zone::Bullseye)
+					std::cout << currentPlayer->getName() << " is going for a " << desiredTarget << '\n';
+				else
+					std::cout << currentPlayer->getName() << " is going for a bullseye!\n";
+				std::cout << currentPlayer->getName() << " hit a " << result << "!\n";
+				if(*error == ThrowError::SurpassedZero)
+					std::cout << currentPlayer->getName() << " has surpassed 0 points. Bust!\n";
+				else if(*error == ThrowError::ImpossibleToFinish)
+					std::cout << currentPlayer->getName() << " can't score a double at the end!\n";
+				else if(*error == ThrowError::NotEndOnDouble)
+					std::cout << currentPlayer->getName() << " did not finish with a double or bullseye!\n";
+				delete error;
+			}
+			pThrows->clear();
+			delete pThrows;
 		}
-		
-		std::cout << "\n===========================================================================\n";
-		std::cout << currentPlayer->getName() << " has " << currentPlayer->getPointsInCurrentGame() << '\n';
-		std::cout << currentPlayer->getName() << " is going for a " << desiredTarget << '\n';
-		int result = currentPlayer->throwDart(desiredTarget,desiredZone);
-		std::cout << currentPlayer->getName() << " hit a " << result << "!\n";
 		std::cout << currentPlayer->getName() << " now has " << currentPlayer->getPointsInCurrentGame() << '\n';
 		std::cout << "\n===========================================================================\n";
 		bP1Turn = !bP1Turn;

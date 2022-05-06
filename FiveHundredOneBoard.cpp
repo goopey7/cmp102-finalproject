@@ -19,8 +19,9 @@ FiveHundredOneBoard::FiveHundredOneBoard(const std::string& player1, const std::
 {
 }
 
-int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, std::vector<int>* throws)
+int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, ThrowError* error,std::vector<int>* throws)
 {
+	*error = ThrowError::None;
 	// Random number between 1 and 100 inclusive
 	int r = rand() % 100 + 1;
 
@@ -50,7 +51,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 		// you're more likely to miss the board completely than hit a target if your successRate is low
 		else if(r <= accuracy + accuracy*.5f)
 		{
-			int newZone = Zone::Single;
+			Zone newZone = Zone::Single;
 			int oneInTen = rand() % 10;
 
 			if(oneInTen == 0)
@@ -59,6 +60,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 				newZone = Zone::Treble;
 
 			hitVal = newZone * (rand() % 20 + 1);
+			zone = newZone;
 		}
 	}
 	else
@@ -76,13 +78,13 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 			// if you were going for a single, I think it's pretty unlikely to accidentally hit
 			// a double or treble
 			if(zone == Zone::Single)
-				bOffVertical = (rand() % 10) == 0; else // but it's pretty easy to miss a treble or a double bOffVertical = rand() % 2;
+				bOffVertical = (rand() % 10) == 0; // but it's pretty easy to miss a treble or a double bOffVertical = rand() % 2;
 
 			bOffHorizontal = (rand() % 3 == 0); // one in three chance of being off horizontal
 			// as in, you've missed the number you were going for
 
 			// provide a new zone that is not the desired zone
-			int newZone = zone;
+			Zone newZone = zone;
 			int newNumber = wantedNumber;
 			if(bOffVertical)
 			{
@@ -115,38 +117,54 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 					newNumber = (*neighbors)[1][wantedNumber];
 			}
 			hitVal = newZone * newNumber;
+			zone = newZone;
 		}
 		// you hit a random target on the board
 		else if (r <= accuracy + accuracy * .5f)
 		{
 			// one in ten chance of getting either a treble or a double
-			int newZone = (rand() % 10 == 0) ? ((rand() % 2) ? Zone::Treble : Zone::Double) : Zone::Single;
+			Zone newZone = (rand() % 10 == 0) ? ((rand() % 2) ? Zone::Treble : Zone::Double) : Zone::Single;
 			hitVal = newZone * (rand() % 20 + 1);
+			zone = newZone;
 		}
 		// Otherwise player has missed the board entirely and there's nothing to do
 	}
 	int newScore = getPlayerPoints(playerName) - hitVal;
+	
+	if(newScore > 1)
+	{
+		(*hitList)[playerName][hitVal]++;
+	}
+	else if(newScore == 0)
+	{
+		if(zone != Zone::Double && zone != Zone::Bullseye)
+		{
+			*error = ThrowError::NotEndOnDouble;
+		}
+		else // player can reach zero fine, so apply it to the score
+		{
+			(*hitList)[playerName][hitVal]++;
+		}
+	}
+	else if(newScore < 0)
+	{
+		*error = ThrowError::SurpassedZero; // indicates that player has gone past zero points, so doesn't count
+	}
+	else if(newScore == 1)
+	{
+		*error = ThrowError::ImpossibleToFinish; // indicates that player has not scored a double at the end
+	}
+
 	// if score has hit zero and player scored a double or bullseye
-	if(newScore == 0 && hitVal % 2 == 0)
+	if(newScore == 0 && *error == ThrowError::None)
 	{
 		bGameOver = true;
 		winner = playerName;
 	}
+
 	if(throws->size() == 3)
 		throws->clear();
 	throws->push_back(hitVal);
-	if(newScore >= 0 && newScore != 1)
-	{
-		(*hitList)[playerName][hitVal]++;
-	}
-	else if(newScore < 0)
-	{
-		hitVal = -1; // indicates that player has gone past zero points, so doesn't count
-	}
-	else if(newScore == 1)
-	{
-		hitVal = -2; // indicates that player has not scored a double at the end
-	}
 
 	if(throws->size() == 3 && hitVal < 0)
 	{
