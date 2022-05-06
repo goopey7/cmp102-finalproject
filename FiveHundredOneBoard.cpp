@@ -20,7 +20,7 @@ FiveHundredOneBoard::FiveHundredOneBoard(const std::string& player1, const std::
 {
 }
 
-int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<int>* throws)
+int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,int>>* throws)
 {
 	*error = ThrowError::None;
 	// Random number between 1 and 100 inclusive
@@ -163,7 +163,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 		winner = playerName;
 	}
 
-	throws->push_back(hitVal);
+	throws->push_back(std::make_pair(hitVal,zone));
 	return hitVal;
 }
 

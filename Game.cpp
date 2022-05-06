@@ -97,7 +97,7 @@ void Game::simulate(GameType gameType)
 		// 501 AI
 		else if(gameType == GameType::FiveHundredOne)
 		{
-			std::vector<int>* pThrows = new std::vector<int>();
+			std::vector<std::pair<int,int>>* pThrows = new std::vector<std::pair<int,int>>();
 			for(int i=0;i<3;i++)
 			{
 				ThrowError* error = new ThrowError();
@@ -176,8 +176,8 @@ void Game::simulate(GameType gameType)
 					break;
 			}
 			int totalScored = 0;
-			for(int score : *pThrows)
-				totalScored+=score;
+			for(std::pair<int,int> score : *pThrows)
+				totalScored+=score.first*score.second;
 			std::cout << currentPlayer->getName() << " scored " << totalScored << '\n';
 			pThrows->clear();
 			delete pThrows;

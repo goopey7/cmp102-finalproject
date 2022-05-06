@@ -29,7 +29,7 @@ class DartBoard
 		DartBoard(const std::string& player1, const std::string& player2);
 		~DartBoard();
 
-		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single, Zone* hitZone = nullptr,ThrowError* error = nullptr,std::vector<int>* throws = nullptr);
+		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single, Zone* hitZone = nullptr,ThrowError* error = nullptr,std::vector<std::pair<int,int>>* throws = nullptr);
 		void undoLastThreeThrows(const std::string& playerName,std::vector<int>* throws);
 		
 		int getPlayerPoints(std::string& playerName);
