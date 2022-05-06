@@ -97,7 +97,7 @@ void Game::simulate(GameType gameType)
 		// 501 AI
 		else if(gameType == GameType::FiveHundredOne)
 		{
-			std::vector<std::pair<int,int>>* pThrows = new std::vector<std::pair<int,int>>();
+			std::vector<std::pair<int,Zone>>* pThrows = new std::vector<std::pair<int,Zone>>();
 			for(int i=0;i<3;i++)
 			{
 				ThrowError* error = new ThrowError();
@@ -162,7 +162,10 @@ void Game::simulate(GameType gameType)
 					std::cout << currentPlayer->getName() << " is going for a " << zoneToString(desiredZone) << " " << desiredTarget << '\n';
 				else
 					std::cout << currentPlayer->getName() << " is going for a bullseye!\n";
-				std::cout << currentPlayer->getName() << " hit a " << zoneToString(*hitZone) << " " << result << "!\n";
+				if(result != 0)
+					std::cout << currentPlayer->getName() << " hit a " << zoneToString(*hitZone) << " " << result << "!\n";
+				else
+					std::cout << currentPlayer->getName() << " has managed to miss the board entirely\n";
 				if(*error == ThrowError::SurpassedZero)
 					std::cout << currentPlayer->getName() << " has surpassed 0 points. Bust!\n";
 				else if(*error == ThrowError::ImpossibleToFinish)
@@ -171,13 +174,24 @@ void Game::simulate(GameType gameType)
 					std::cout << currentPlayer->getName() << " did not finish with a double or bullseye!\n";
 				bool bBreakLoop = *error != ThrowError::None || currentPlayer->getPointsInCurrentGame() == 0;
 				delete hitZone;
+				if(*error != ThrowError::None)
+				{
+					board->undoLastThreeThrows(currentPlayer->getName(),pThrows);
+				}
+
 				delete error;
+
 				if(bBreakLoop)
 					break;
 			}
 			int totalScored = 0;
-			for(std::pair<int,int> score : *pThrows)
-				totalScored+=score.first*score.second;
+			for(std::pair<int,Zone> score : *pThrows)
+			{
+				if(score.second != Zone::Bullseye && score.second != Zone::OuterBullseye)
+					totalScored+=score.first*score.second;
+				else
+					totalScored+=score.first;
+			}
 			std::cout << currentPlayer->getName() << " scored " << totalScored << '\n';
 			pThrows->clear();
 			delete pThrows;

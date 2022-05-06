@@ -11,7 +11,7 @@ Player::~Player()
 {
 }
 
-int Player::throwDart(int desiredPoints, Zone desiredZone, Zone* hitZone, std::vector<std::pair<int,int>>* throws, ThrowError* error)
+int Player::throwDart(int desiredPoints, Zone desiredZone, Zone* hitZone, std::vector<std::pair<int,Zone>>* throws, ThrowError* error)
 {
 	if(throws == nullptr)
 		return currentBoard->placeDart(name,successRate,desiredPoints,desiredZone);

@@ -29,8 +29,8 @@ class DartBoard
 		DartBoard(const std::string& player1, const std::string& player2);
 		~DartBoard();
 
-		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single, Zone* hitZone = nullptr,ThrowError* error = nullptr,std::vector<std::pair<int,int>>* throws = nullptr);
-		void undoLastThreeThrows(const std::string& playerName,std::vector<int>* throws);
+		virtual int placeDart(std::string& playerName, int accuracy, int ptsWanted, Zone zone = Zone::Single, Zone* hitZone = nullptr,ThrowError* error = nullptr,std::vector<std::pair<int,Zone>>* throws = nullptr);
+		void undoLastThreeThrows(const std::string& playerName,std::vector<std::pair<int,Zone>>* throws);
 		
 		int getPlayerPoints(std::string& playerName);
 		bool isGameOver() const;
@@ -42,7 +42,7 @@ class DartBoard
 	protected:
 		GameType gameType;
 		std::vector<std::vector<int>>* neighbors;
-		std::map<std::string,std::map<int,int>>* hitList;
+		std::map<std::string,std::map<std::pair<int,Zone>,int>>* hitList;
 		bool bGameOver = false;
 		std::string winner;
 };

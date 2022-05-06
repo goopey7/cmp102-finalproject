@@ -1,22 +1,12 @@
 //Copyright Sam Collier 2022
 
 #include "DartBoard.h"
+#include <iostream>
 
 DartBoard::DartBoard(const std::string& player1, const std::string& player2)
 {
-	hitList = new std::map<std::string,std::map<int,int>>();
+	hitList = new std::map<std::string,std::map<std::pair<int,Zone>,int>>();
 	auto hits = *hitList;
-	// set all targets hit to 0 (players haven't hit anything)
-	for(int i=1; i<(*neighbors)[0].size(); i++)
-	{
-		hits[player1][(*neighbors)[0][i]] = 0;
-		hits[player1][25]=0;
-		hits[player1][50]=0;
-
-		hits[player2][(*neighbors)[0][i]] = 0;
-		hits[player2][25]=0;
-		hits[player2][50]=0;
-	}
 
 	// initialize random seed
 	srand(time(0));
@@ -24,9 +14,15 @@ DartBoard::DartBoard(const std::string& player1, const std::string& player2)
 int DartBoard::getPlayerPoints(std::string& playerName)
 {
 	int total = gameType;
-	for(auto target : (*hitList)[playerName])
+	for(std::pair<std::pair<int,Zone>,int> target : (*hitList)[playerName])
 	{
-		total -= target.first * target.second;
+		// Zone * value * amount of hits
+		if(target.first.second != Zone::OuterBullseye && target.first.second != Zone::Bullseye)
+			total -= target.first.first * target.first.second * target.second;
+		else
+		{
+			total -= target.first.first * target.second;
+		}
 	}
 
 	if(total <= 0)
@@ -45,7 +41,7 @@ GameType DartBoard::getGameType() const
 	return gameType;
 }
 
-int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,int>>* throws)
+int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,Zone>>* throws)
 {
 	return -1;
 }
@@ -84,9 +80,9 @@ int DartBoard::getClosestTarget(int numToCheck) const
 	return bestNum;
 }
 
-void DartBoard::undoLastThreeThrows(const std::string& playerName,std::vector<int>* throws)
+void DartBoard::undoLastThreeThrows(const std::string& playerName,std::vector<std::pair<int,Zone>>* throws)
 {
-	for(int dart : *throws)
+	for(std::pair<int,Zone> dart : *throws)
 	{
 		(*hitList)[playerName][dart]--;
 	}

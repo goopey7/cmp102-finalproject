@@ -20,7 +20,7 @@ FiveHundredOneBoard::FiveHundredOneBoard(const std::string& player1, const std::
 {
 }
 
-int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,int>>* throws)
+int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,Zone>>* throws)
 {
 	*error = ThrowError::None;
 	// Random number between 1 and 100 inclusive
@@ -134,18 +134,11 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 	*hitZone = zone;
 	if(newScore > 1)
 	{
-		(*hitList)[playerName][hitVal*zone]++;
+		(*hitList)[playerName][std::make_pair(hitVal,zone)]++;
 	}
-	else if(newScore == 0)
+	else if(newScore == 0 && zone != Zone::Double && zone != Zone::Bullseye)
 	{
-		if(zone != Zone::Double && zone != Zone::Bullseye)
-		{
-			*error = ThrowError::NotEndOnDouble;
-		}
-		else // player can reach zero fine, so apply it to the score
-		{
-			(*hitList)[playerName][hitVal*zone]++;
-		}
+		*error = ThrowError::NotEndOnDouble;
 	}
 	else if(newScore < 0)
 	{
@@ -161,6 +154,7 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 	{
 		bGameOver = true;
 		winner = playerName;
+		(*hitList)[playerName][std::make_pair(hitVal,zone)]++;
 	}
 
 	throws->push_back(std::make_pair(hitVal,zone));
