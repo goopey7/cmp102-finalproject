@@ -132,11 +132,9 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 	}
 	int newScore = getPlayerPoints(playerName) - hitVal*zone;
 	*hitZone = zone;
-	if(newScore > 1)
-	{
-		(*hitList)[playerName][std::make_pair(hitVal,zone)]++;
-	}
-	else if(newScore == 0 && zone != Zone::Double && zone != Zone::Bullseye)
+	(*hitList)[playerName][std::make_pair(hitVal,zone)]++;
+
+	if(newScore == 0 && zone != Zone::Double && zone != Zone::Bullseye)
 	{
 		*error = ThrowError::NotEndOnDouble;
 	}
@@ -154,7 +152,6 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 	{
 		bGameOver = true;
 		winner = playerName;
-		(*hitList)[playerName][std::make_pair(hitVal,zone)]++;
 	}
 
 	throws->push_back(std::make_pair(hitVal,zone));

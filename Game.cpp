@@ -3,7 +3,7 @@
 #include "Game.h"
 
 Game::Game(Player* p1, Player* p2, GameType type, int id, bool p1First)
-	: bP1First(p1First)
+	: bP1First(p1First), gameType(type)
 {
 	players.first = p1;
 	players.second = p2;
@@ -44,7 +44,7 @@ const std::string& Game::getWinner() const
 	return winner;
 }
 
-void Game::simulate(GameType gameType)
+void Game::simulate()
 {
 	Player* p1 = (bP1First) ? players.first : players.second;
 	Player* p2 = (!bP1First) ? players.first : players.second;
@@ -98,7 +98,9 @@ void Game::simulate(GameType gameType)
 		else if(gameType == GameType::FiveHundredOne)
 		{
 			std::vector<std::pair<int,Zone>>* pThrows = new std::vector<std::pair<int,Zone>>();
-			for(int i=0;i<3;i++)
+
+			// TURNS
+			for(int turn=0;turn<3;turn++)
 			{
 				ThrowError* error = new ThrowError();
 				if(currentPlayer->getPointsInCurrentGame() > 100)
@@ -163,7 +165,14 @@ void Game::simulate(GameType gameType)
 				else
 					std::cout << currentPlayer->getName() << " is going for a bullseye!\n";
 				if(result != 0)
-					std::cout << currentPlayer->getName() << " hit a " << zoneToString(*hitZone) << " " << result << "!\n";
+				{
+					if(*hitZone != Zone::Bullseye && *hitZone != Zone::OuterBullseye)
+						std::cout << currentPlayer->getName() << " hit a " << zoneToString(*hitZone) << " " << result << "!\n";
+					else if(*hitZone == Zone::Bullseye)
+						std::cout << currentPlayer->getName() << " hit a bullseye!!\n";
+					else if(*hitZone == Zone::OuterBullseye)
+						std::cout << currentPlayer->getName() << " hit the outer bullseye!!\n";
+				}
 				else
 					std::cout << currentPlayer->getName() << " has managed to miss the board entirely\n";
 				if(*error == ThrowError::SurpassedZero)
@@ -199,6 +208,8 @@ void Game::simulate(GameType gameType)
 		std::cout << currentPlayer->getName() << " now has " << currentPlayer->getPointsInCurrentGame() << '\n';
 		std::cout << "\n===========================================================================\n";
 		bP1Turn = !bP1Turn;
+		if(currentPlayer->getPointsInCurrentGame() == 0)
+			break;
 	}
 	std::cout << "\n***************************************************\n";
 	std::cout << "WINNER: " << board->getWinner();
@@ -253,5 +264,10 @@ std::string Game::zoneToString(Zone zoneIn)
 			break;
 	}
 	return "";
+}
+
+std::string Game::getWinner()
+{
+	return winner;
 }
 

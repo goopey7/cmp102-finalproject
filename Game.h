@@ -20,14 +20,17 @@ class Game
 		int getID() const;
 		DartBoard* getBoard() const;
 
-		void simulate(GameType gameType);
+		void simulate();
 		void play();
+
+		std::string getWinner();
 
 	private:
 		std::pair<Player*, Player*> players;
 		std::map<std::string,int> points;
 		std::string winner;
 		int id;
+		GameType gameType;
 		DartBoard* board;
 		bool bP1First = true;
 		std::string zoneToString(Zone zoneIn);
