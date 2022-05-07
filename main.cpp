@@ -8,8 +8,8 @@ int main()
 	Player sid("Sid",50);
 	Player joe("Joe",50);
 
-	Game game(&sid,&joe,GameType::FiveHundredOne,0,true);
-	game.simulate();
+	Set set(&sid,&joe);
+	set.simulate();
 
 	/*
 	Match match(sid,joe);

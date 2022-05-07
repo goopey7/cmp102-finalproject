@@ -214,6 +214,7 @@ void Game::simulate()
 	std::cout << "\n***************************************************\n";
 	std::cout << "WINNER: " << board->getWinner();
 	std::cout << "\n***************************************************\n";
+	winner = board->getWinner();
 }
 
 void Game::play()
