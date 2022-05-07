@@ -17,33 +17,60 @@ int main()
 	while(choice < 1 && choice > 2)
 	{
 		std::cout << "It's either 1 or 2 you muppet\n";
+		std::cin.clear();
 		std::cin >> choice;
 	}
+	
 	std::cout << "Would you like to automatically simulate matches? (Y/N): > ";
 	std::string yesOrNo;
+	std::cin.clear();
 	std::cin >> yesOrNo;
 	while(yesOrNo != "No" && yesOrNo != "no" && yesOrNo != "N" && yesOrNo != "n"
 			&& yesOrNo != "Yes" && yesOrNo != "yes" && yesOrNo != "Y" && yesOrNo != "y")
 	{
 		std::cout << "Please input 'yes' or 'no' (Y/N) > ";
+		std::cin.clear();
 		std::cin >> yesOrNo;
 	}
 
 	std::cout << "Enter a name for player 1: > ";
 	std::string p1Name;
+	std::cin.clear();
 	std::cin >> p1Name;
 	std::cout << "Enter a percent accuracy for " << p1Name << ": > ";
 	int p1Accuracy = 0;
+	std::cin.clear();
 	std::cin >> p1Accuracy;
 	Player p1(p1Name,p1Accuracy);
 
 	std::cout << "Enter a name for player 2: > ";
 	std::string p2Name;
+	std::cin.clear();
 	std::cin >> p2Name;
 	std::cout << "Enter a percent accuracy for " << p2Name << ": > ";
 	int p2Accuracy = 0;
 	std::cin >> p2Accuracy;
 	Player p2(p2Name,p2Accuracy);
+
+	bool bP1FirstIn301 = true;
+	if(choice == 1) // 301
+	{
+		std::cout << "Who would you like " << p1.getName() << " to go first? (Y/N): > ";
+
+		std::string p1First = "";
+		std::cin.clear();
+		std::cin >> p1First;
+		while(p1First != "No" && p1First != "no" && p1First != "N" && p1First != "n"
+			&& p1First != "Yes" && p1First != "yes" && p1First != "Y" && p1First != "y")
+		{
+			std::cout << "Please input 'yes' or 'no' (Y/N) > ";
+			std::cin >> p1First;
+		}
+		if(p1First.at(0) == 'N' || p1First.at(0) == 'n')
+		{
+			bP1FirstIn301 = false;
+		}
+	}
 
 	// we are simulating matches
 	if(yesOrNo.at(0) == 'Y' || yesOrNo.at(0) == 'y')
@@ -69,11 +96,9 @@ int main()
 		}
 		else
 		{
-			// TODO determine who goes first
-
 			for(int i=0;i<numMatches;i++)
 			{
-				Game game(&p1,&p2,GameType::ThreeHundredOne,true);
+				Game game(&p1,&p2,GameType::ThreeHundredOne,bP1FirstIn301);
 				game.simulate();
 
 				if(game.getWinner() == p1.getName())
@@ -120,7 +145,7 @@ int main()
 		}
 		else
 		{
-			Game game(&p1,&p2,GameType::ThreeHundredOne,true);
+			Game game(&p1,&p2,GameType::ThreeHundredOne,bP1FirstIn301);
 			game.play();
 		}
 	}
