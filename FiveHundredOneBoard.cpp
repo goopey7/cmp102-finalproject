@@ -20,9 +20,10 @@ FiveHundredOneBoard::FiveHundredOneBoard(const std::string& player1, const std::
 {
 }
 
-int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,Zone>>* throws)
+int FiveHundredOneBoard::placeDart(const std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,Zone>>* throws)
 {
-	*error = ThrowError::None;
+	if(error!=nullptr)
+		*error = ThrowError::None;
 	// Random number between 1 and 100 inclusive
 	int r = rand() % 100 + 1;
 
@@ -131,30 +132,36 @@ int FiveHundredOneBoard::placeDart(std::string& playerName, int accuracy, int wa
 		// Otherwise player has missed the board entirely and there's nothing to do
 	}
 	int newScore = getPlayerPoints(playerName) - hitVal*zone;
-	*hitZone = zone;
+	if(hitZone != nullptr)
+		*hitZone = zone;
 	(*hitList)[playerName][std::make_pair(hitVal,zone)]++;
 
-	if(newScore == 0 && zone != Zone::Double && zone != Zone::Bullseye)
+	if(error != nullptr)
 	{
-		*error = ThrowError::NotEndOnDouble;
-	}
-	else if(newScore < 0)
-	{
-		*error = ThrowError::SurpassedZero; // indicates that player has gone past zero points, so doesn't count
-	}
-	else if(newScore == 1)
-	{
-		*error = ThrowError::ImpossibleToFinish; // indicates that player has not scored a double at the end
+		if(newScore == 0 && zone != Zone::Double && zone != Zone::Bullseye)
+		{
+			*error = ThrowError::NotEndOnDouble;
+		}
+		else if(newScore < 0)
+		{
+			*error = ThrowError::SurpassedZero; // indicates that player has gone past zero points, so doesn't count
+		}
+		else if(newScore == 1)
+		{
+			*error = ThrowError::ImpossibleToFinish; // indicates that player has not scored a double at the end
+		}
+
+		// if score has hit zero and player scored a double or bullseye
+		if(newScore == 0 && *error == ThrowError::None)
+		{
+			bGameOver = true;
+			winner = playerName;
+		}
 	}
 
-	// if score has hit zero and player scored a double or bullseye
-	if(newScore == 0 && *error == ThrowError::None)
-	{
-		bGameOver = true;
-		winner = playerName;
-	}
+	if(throws != nullptr)
+		throws->push_back(std::make_pair(hitVal,zone));
 
-	throws->push_back(std::make_pair(hitVal,zone));
 	return hitVal;
 }
 

@@ -11,7 +11,7 @@ DartBoard::DartBoard(const std::string& player1, const std::string& player2)
 	// initialize random seed
 	srand(time(0));
 }
-int DartBoard::getPlayerPoints(std::string& playerName)
+int DartBoard::getPlayerPoints(const std::string& playerName)
 {
 	int total = gameType;
 	for(std::pair<std::pair<int,Zone>,int> target : (*hitList)[playerName])
@@ -41,7 +41,7 @@ GameType DartBoard::getGameType() const
 	return gameType;
 }
 
-int DartBoard::placeDart(std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,Zone>>* throws)
+int DartBoard::placeDart(const std::string& playerName, int accuracy, int wantedNumber, Zone zone, Zone* hitZone,ThrowError* error,std::vector<std::pair<int,Zone>>* throws)
 {
 	return -1;
 }
