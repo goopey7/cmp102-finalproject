@@ -48,3 +48,8 @@ const std::string& Player::getName() const
 	return name;
 }
 
+int Player::getAccuracy() const
+{
+	return successRate;
+}
+

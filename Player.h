@@ -16,6 +16,7 @@ class Player
 		int getPointsInCurrentGame();
 		void newGame(DartBoard* board);
 		const std::string& getName() const;
+		int getAccuracy() const;
 
 	private:
 		std::string name;

@@ -18,7 +18,6 @@ class Set
 		bool bIsSetOver = false;
 		Player* p1;
 		Player* p2;
-		bool checkIsSetOver();
 		int whoGoesFirst(); // returns 1 for p1 and 2 for p2
 };
 

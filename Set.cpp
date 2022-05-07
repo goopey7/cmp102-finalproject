@@ -29,7 +29,7 @@ void Set::simulate()
 	// Determine who goes first for the set
 	int first = whoGoesFirst();
 	bool p1GoesFirstThisGame = (first == 1);
-	while(!checkIsSetOver())
+	while(!isSetOver())
 	{
 		Game* game = new Game(p1,p2,FiveHundredOne,0,p1GoesFirstThisGame);
 		games.push_back(game);
@@ -38,15 +38,12 @@ void Set::simulate()
 	}
 }
 
-bool Set::isSetOver()
+Set::Set(Player* p1, Player* p2)
+	: p1(p1), p2(p2)
 {
-	return bIsSetOver;
 }
 
-Set::Set(Player* p1, Player* p2) : p1(p1), p2(p2) {
-}
-
-bool Set::checkIsSetOver()
+bool Set::isSetOver()
 {
 	if(games.size() < 3)
 		return false;
@@ -65,6 +62,15 @@ bool Set::checkIsSetOver()
 
 int Set::whoGoesFirst()
 {
-	return 1;
+	// Both players go for bullseye
+	FiveHundredOneBoard board(p1->getName(),p2->getName());
+	Zone* hitZone1 = new Zone();
+	Zone* hitZone2 = new Zone();
+	int p1Hit = board.placeDart(p1->getName(),p1->getAccuracy(),50,Zone::Bullseye,hitZone1);
+	int p2Hit = board.placeDart(p2->getName(),p2->getAccuracy(),50,Zone::Bullseye,hitZone2);
+	if(abs(50 - (p1Hit*(*hitZone1))) < abs(50 - (p2Hit*(*hitZone2))))
+		return 1;
+	else
+		return 2;
 }
 
