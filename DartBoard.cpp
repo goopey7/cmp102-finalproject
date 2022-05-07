@@ -88,3 +88,14 @@ void DartBoard::undoLastThreeThrows(const std::string& playerName,std::vector<st
 		(*hitList)[playerName][dart]--;
 	}
 }
+
+bool DartBoard::isTarget(int target) const
+{
+	for(int neighbor : (*neighbors)[0])
+	{
+		if(neighbor == target)
+			return true;
+	}
+	return false;
+}
+

@@ -2,7 +2,7 @@
 
 #include "Game.h"
 
-Game::Game(Player* p1, Player* p2, GameType type, int id, bool p1First)
+Game::Game(Player* p1, Player* p2, GameType type, bool p1First)
 	: bP1First(p1First), gameType(type)
 {
 	players.first = p1;
@@ -20,8 +20,6 @@ Game::Game(Player* p1, Player* p2, GameType type, int id, bool p1First)
 
 	p1->newGame(board);
 	p2->newGame(board);
-
-	this->id = id;
 }
 
 Game::~Game()
@@ -32,11 +30,6 @@ Game::~Game()
 DartBoard* Game::getBoard() const
 {
 	return board;
-}
-
-int Game::getID() const
-{
-	return id;
 }
 
 const std::string& Game::getWinner() const
@@ -228,19 +221,30 @@ void Game::play()
 	bool bP1Turn = true;
 	while(!board->isGameOver())
 	{
-		Zone desiredZone = Zone::Single;
-		Player* currentPlayer = (bP1Turn) ? p1 : p2;
-		std::cout << "\n===================================================\n";
-		std::cout << "Current Player: " << currentPlayer->getName() << '\n';
-		std::cout << "Ponts: " << currentPlayer->getPointsInCurrentGame() << '\n';
-		std::cout << "\n===================================================\n";
-		std::cout << "<Enter desired target> : ";
-		int desiredTarget;
-		std::cin >> desiredTarget;
-		if(desiredTarget == 50)
-			desiredZone = Zone::Bullseye;
-		std::cout << currentPlayer->getName() << " hit a " << currentPlayer->throwDart(desiredTarget,desiredZone) << "!\n";
-		bP1Turn = !bP1Turn;
+		// 301 Manual gameplay
+		if(gameType == GameType::ThreeHundredOne)
+		{
+			Zone desiredZone = Zone::Single;
+			Player* currentPlayer = (bP1Turn) ? p1 : p2;
+			std::cout << "\n===================================================\n";
+			std::cout << "Current Player: " << currentPlayer->getName() << '\n';
+			std::cout << "Ponts: " << currentPlayer->getPointsInCurrentGame() << '\n';
+			std::cout << "\n===================================================\n";
+			std::cout << "<Enter desired target> : ";
+			int desiredTarget;
+			std::cin >> desiredTarget;
+			
+			// handle bad input
+			while(!isATarget(desiredTarget) && desiredTarget != 50 && desiredTarget != 0)
+			{
+				std::cout << "\nPlease enter a valid target you muppet!\n";
+				std::cin >> desiredTarget;
+			}
+			if(desiredTarget == 50)
+				desiredZone = Zone::Bullseye;
+			std::cout << currentPlayer->getName() << " hit a " << currentPlayer->throwDart(desiredTarget,desiredZone) << "!\n";
+			bP1Turn = !bP1Turn;
+		}
 	}
 	std::cout << "\n***************************************************\n";
 	std::cout << "WINNER: " << board->getWinner();
@@ -282,3 +286,9 @@ long msSinceEpoch()
     system_clock::now().time_since_epoch());
 	return ms.count();
 }
+
+bool Game::isATarget(int targetIn) const
+{
+	return board->isTarget(targetIn);
+}
+

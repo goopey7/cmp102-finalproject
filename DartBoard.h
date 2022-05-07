@@ -38,6 +38,7 @@ class DartBoard
 		const std::string& getWinner() const;
 		std::vector<std::vector<int>>* getNeighbors() const;
 		int getClosestTarget(int numToCheck) const;
+		bool isTarget(int target) const;
 
 	protected:
 		GameType gameType;
