@@ -12,6 +12,7 @@ class Set
 		int getGamesPlayed();
 
 		void simulate();
+		void play();
 		bool isSetOver();
 	private:
 		std::vector<Game*> games;

@@ -35,6 +35,17 @@ void Match::simulate()
 	}
 }
 
+void Match::play()
+{
+	srand(msSinceEpoch());
+	while(!isMatchOver())
+	{
+		Set* set = new Set(p1,p2);
+		sets.push_back(set);
+		set->play();
+	}
+}
+
 bool Match::isMatchOver()
 {
 	if(sets.size() < 7)

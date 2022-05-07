@@ -7,6 +7,7 @@ class Match
 {
 	public:
 		Match(Player& p1, Player& p2);
+		void play();
 		void simulate();
 		std::string getWinner();
 		int getSetsPlayed();

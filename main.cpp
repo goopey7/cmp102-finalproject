@@ -9,7 +9,8 @@ int main()
 	Player joe("Joe",50);
 
 	Match match(joe,sid);
-	match.simulate();
+	//match.simulate();
+	match.play();
 
 	return 0;
 }

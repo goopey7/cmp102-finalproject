@@ -35,9 +35,24 @@ void Set::simulate()
 	while(!isSetOver())
 	{
 		srand(msSinceEpoch());
-		Game* game = new Game(p1,p2,FiveHundredOne,0,p1GoesFirstThisGame);
+		Game* game = new Game(p1,p2,FiveHundredOne,p1GoesFirstThisGame);
 		games.push_back(game);
 		game->simulate();
+		p1GoesFirstThisGame = !p1GoesFirstThisGame;
+	}
+}
+
+void Set::play()
+{
+	// Determine who goes first for the set
+	int first = whoGoesFirst();
+	bool p1GoesFirstThisGame = (first == 1);
+	while(!isSetOver())
+	{
+		srand(msSinceEpoch());
+		Game* game = new Game(p1,p2,FiveHundredOne,p1GoesFirstThisGame);
+		games.push_back(game);
+		game->play();
 		p1GoesFirstThisGame = !p1GoesFirstThisGame;
 	}
 }

@@ -221,15 +221,16 @@ void Game::play()
 	bool bP1Turn = true;
 	while(!board->isGameOver())
 	{
+		Player* currentPlayer = (bP1Turn) ? p1 : p2;
+		std::cout << "\n===================================================\n";
+		std::cout << "Current Player: " << currentPlayer->getName() << '\n';
+		std::cout << "Ponts: " << currentPlayer->getPointsInCurrentGame() << '\n';
+		std::cout << "\n===================================================\n";
 		// 301 Manual gameplay
 		if(gameType == GameType::ThreeHundredOne)
 		{
 			Zone desiredZone = Zone::Single;
-			Player* currentPlayer = (bP1Turn) ? p1 : p2;
-			std::cout << "\n===================================================\n";
-			std::cout << "Current Player: " << currentPlayer->getName() << '\n';
-			std::cout << "Ponts: " << currentPlayer->getPointsInCurrentGame() << '\n';
-			std::cout << "\n===================================================\n";
+			
 			std::cout << "<Enter desired target> : ";
 			int desiredTarget;
 			std::cin >> desiredTarget;
@@ -237,7 +238,7 @@ void Game::play()
 			// handle bad input
 			while(!isATarget(desiredTarget) && desiredTarget != 50 && desiredTarget != 0)
 			{
-				std::cout << "\nPlease enter a valid target you muppet!\n";
+				std::cout << "\nPlease enter a valid target you muppet! > ";
 				std::cin >> desiredTarget;
 			}
 			if(desiredTarget == 50)
@@ -245,6 +246,137 @@ void Game::play()
 			std::cout << currentPlayer->getName() << " hit a " << currentPlayer->throwDart(desiredTarget,desiredZone) << "!\n";
 			bP1Turn = !bP1Turn;
 		}
+		// 501 Manual gameplay
+		else if(gameType == GameType::FiveHundredOne)
+		{
+			std::vector<std::pair<int,Zone>>* pThrows = new std::vector<std::pair<int,Zone>>();
+
+			// TURNS
+			for(int turn=0;turn<3;turn++)
+			{
+				ThrowError* error = new ThrowError();
+				
+				Zone desiredZone;
+				int desiredTarget;
+
+				// select a zone
+				int choice = 0;
+				int roundScoreSoFar = 0;
+				for(std::pair<int,Zone> dart : *pThrows)
+				{
+					if(dart.second != Zone::Bullseye && dart.second != Zone::OuterBullseye)
+						roundScoreSoFar += dart.first * dart.second;
+					else
+						roundScoreSoFar += dart.first;
+				}
+				std::cout << "\n\nScore accumulated so far: " << roundScoreSoFar;
+				std::cout << "\nPotential score so far: " << currentPlayer->getPointsInCurrentGame() - roundScoreSoFar;
+				std::cout << "\n\nPlease select your desired Zone:\n";
+				std::cout << "(1) Single\n";
+				std::cout << "(2) Double\n";
+				std::cout << "(3) Treble\n";
+				std::cout << "(4) Outer Bullseye\n";
+				std::cout << "(5) Inner Bullseye\n";
+				std::cout << "Zone: > ";
+				std::cin >> choice;
+				while(choice < 1 || choice > 5)
+				{
+					std::cout << "Please enter a value between 1-5\n";
+					std::cin >> choice;
+				}
+
+				switch(choice)
+				{
+					case 1:
+						desiredZone = Zone::Single;
+						break;
+					case 2:
+						desiredZone = Zone::Double;
+						break;
+					case 3:
+						desiredZone = Zone::Treble;
+						break;
+					case 4:
+						desiredZone = Zone::OuterBullseye;
+						break;
+					case 5:
+						desiredZone = Zone::Bullseye;
+						break;
+				}
+
+				// select a target
+				if(desiredZone != Zone::Bullseye && desiredZone != Zone::OuterBullseye)
+				{
+					choice = 0;
+					std::cout << "\nPlease input your desired target: > ";
+					std::cin >> desiredTarget;
+					if(!isATarget(desiredTarget))
+					{
+						std::cout << "\nPlease enter a valid target you muppet! > ";
+						std::cin >> desiredTarget;
+					}
+				}
+				else if(desiredZone == Zone::Bullseye)
+				{
+					desiredTarget = 50;
+				}
+				else
+				{
+					desiredTarget = 25;
+				}
+
+				Zone* hitZone = new Zone();
+				int result = currentPlayer->throwDart(desiredTarget,desiredZone,hitZone,pThrows,error);
+				// resulting output
+				if(desiredZone != Zone::Bullseye && desiredZone != Zone::OuterBullseye)
+					std::cout << currentPlayer->getName() << " is going for a " << zoneToString(desiredZone) << " " << desiredTarget << '\n';
+				else if(desiredZone == Zone::Bullseye)
+					std::cout << currentPlayer->getName() << " is going for a bullseye!\n";
+				else
+					std::cout << currentPlayer->getName() << " is going for the outer bullseye!\n";
+
+				if(result != 0)
+				{
+					if(*hitZone != Zone::Bullseye && *hitZone != Zone::OuterBullseye)
+						std::cout << currentPlayer->getName() << " hit a " << zoneToString(*hitZone) << " " << result << "!\n";
+					else if(*hitZone == Zone::Bullseye)
+						std::cout << currentPlayer->getName() << " hit a bullseye!!\n";
+					else if(*hitZone == Zone::OuterBullseye)
+						std::cout << currentPlayer->getName() << " hit the outer bullseye!!\n";
+				}
+				else
+					std::cout << currentPlayer->getName() << " has managed to miss the board entirely\n";
+				if(*error == ThrowError::SurpassedZero)
+					std::cout << currentPlayer->getName() << " has surpassed 0 points. Bust!\n";
+				else if(*error == ThrowError::ImpossibleToFinish)
+					std::cout << currentPlayer->getName() << " can't score a double at the end!\n";
+				else if(*error == ThrowError::NotEndOnDouble)
+					std::cout << currentPlayer->getName() << " did not finish with a double or bullseye!\n";
+				bool bBreakLoop = *error != ThrowError::None || currentPlayer->getPointsInCurrentGame() == 0;
+				delete hitZone;
+				if(*error != ThrowError::None)
+				{
+					board->undoLastThreeThrows(currentPlayer->getName(),pThrows);
+				}
+
+				delete error;
+
+				if(bBreakLoop)
+					break;
+			}
+			int totalScored = 0;
+			for(std::pair<int,Zone> score : *pThrows)
+			{
+				if(score.second != Zone::Bullseye && score.second != Zone::OuterBullseye)
+					totalScored+=score.first*score.second;
+				else
+					totalScored+=score.first;
+			}
+			std::cout << currentPlayer->getName() << " scored " << totalScored << '\n';
+			pThrows->clear();
+			delete pThrows;
+		}
+		bP1Turn = !bP1Turn;
 	}
 	std::cout << "\n***************************************************\n";
 	std::cout << "WINNER: " << board->getWinner();
