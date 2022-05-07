@@ -1,6 +1,7 @@
 //Copyright Sam Collier 2022
 
 #include "Match.h"
+#include <sstream>
 
 std::string Match::getWinner()
 {
@@ -62,5 +63,20 @@ bool Match::isMatchOver()
 	std::cout << "\nSETS\n";
 	std::cout << p1->getName() << " " << p1Wins << " : " << p2Wins << " " << p2->getName() << '\n';
 	return (p1Wins >= 7 || p2Wins >= 7);
+}
+
+std::string Match::getResult()
+{
+	int p1Wins=0,p2Wins=0;
+	for(Set* set : sets)
+	{
+		if(p1->getName() == set->getWinner())
+			p1Wins++;
+		else if(p2->getName() == set->getWinner())
+			p2Wins++;
+	}
+	std::ostringstream oss;
+	oss << p1->getName() << " " << p1Wins << " : " << p2Wins << " " << p2->getName();
+	return oss.str();
 }
 

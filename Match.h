@@ -12,6 +12,7 @@ class Match
 		std::string getWinner();
 		int getSetsPlayed();
 		bool isMatchOver();
+		std::string getResult();
 
 	private:
 		std::vector<Set*> sets;
