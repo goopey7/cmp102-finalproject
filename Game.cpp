@@ -52,6 +52,7 @@ void Game::simulate()
 	bool bP1Turn = true;
 	while(!board->isGameOver())
 	{
+		srand(msSinceEpoch());
 		Player* currentPlayer = (bP1Turn) ? p1 : p2;
 
 		// AI LOGIC
@@ -60,6 +61,11 @@ void Game::simulate()
 		int result;
 
 		std::cout << "\n===========================================================================\n";
+		if(currentPlayer->getPointsInCurrentGame() == 1)
+		{
+			int x;
+			std::cin >> x;
+		}
 		std::cout << currentPlayer->getName() << " has " << currentPlayer->getPointsInCurrentGame() << '\n';
 
 		// 301 AI
@@ -141,20 +147,17 @@ void Game::simulate()
 					desiredZone = Zone::Bullseye;
 					desiredTarget = 50;
 				}
-				else if(currentPlayer->getPointsInCurrentGame() < 50 && currentPlayer->getPointsInCurrentGame() > 20)
+				else if(currentPlayer->getPointsInCurrentGame() < 50 && currentPlayer->getPointsInCurrentGame() > 21)
 				{
 					desiredZone = Zone::Single;
 					desiredTarget = 20;
 				}
-				else if(currentPlayer->getPointsInCurrentGame() <= 20 && currentPlayer->getPointsInCurrentGame() > 10)
-				{
-					desiredZone = Zone::Double;
-					desiredTarget = board->getClosestTarget(currentPlayer->getPointsInCurrentGame());
-				}
-				else if(currentPlayer->getPointsInCurrentGame() <= 10)
+				else if(currentPlayer->getPointsInCurrentGame() <= 21)
 				{
 					desiredZone = Zone::Double;
 					desiredTarget = board->getClosestTarget(currentPlayer->getPointsInCurrentGame()/2);
+					if(desiredTarget*2 == currentPlayer->getPointsInCurrentGame()-1)
+						desiredZone = Zone::Single;
 				}
 
 				Zone* hitZone = new Zone();
@@ -272,3 +275,10 @@ std::string Game::getWinner()
 	return winner;
 }
 
+long msSinceEpoch()
+{
+	using namespace std::chrono;
+	milliseconds ms = duration_cast< milliseconds >(
+    system_clock::now().time_since_epoch());
+	return ms.count();
+}

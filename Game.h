@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <chrono>
 
 #include "ThreeHundredOneBoard.h"
 #include "FiveHundredOneBoard.h"
@@ -28,7 +29,7 @@ class Game
 	private:
 		std::pair<Player*, Player*> players;
 		std::map<std::string,int> points;
-		std::string winner;
+		std::string winner = "";
 		int id;
 		GameType gameType;
 		DartBoard* board;
@@ -36,3 +37,4 @@ class Game
 		std::string zoneToString(Zone zoneIn);
 };
 
+long msSinceEpoch();

@@ -131,7 +131,12 @@ int FiveHundredOneBoard::placeDart(const std::string& playerName, int accuracy, 
 		}
 		// Otherwise player has missed the board entirely and there's nothing to do
 	}
-	int newScore = getPlayerPoints(playerName) - hitVal*zone;
+
+	int hitValMultiplier = 1;
+	if(zone != Zone::Bullseye && zone != Zone::OuterBullseye)
+		hitValMultiplier = zone;
+
+	int newScore = getPlayerPoints(playerName) - hitVal*hitValMultiplier;
 	if(hitZone != nullptr)
 		*hitZone = zone;
 	(*hitList)[playerName][std::make_pair(hitVal,zone)]++;

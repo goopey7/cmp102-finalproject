@@ -16,11 +16,12 @@ int DartBoard::getPlayerPoints(const std::string& playerName)
 	int total = gameType;
 	for(std::pair<std::pair<int,Zone>,int> target : (*hitList)[playerName])
 	{
-		// Zone * value * amount of hits
 		if(target.first.second != Zone::OuterBullseye && target.first.second != Zone::Bullseye)
+			// Zone * value * amount of hits
 			total -= target.first.first * target.first.second * target.second;
 		else
 		{
+			// value * amount of hits
 			total -= target.first.first * target.second;
 		}
 	}

@@ -16,7 +16,10 @@ std::string Set::getWinner()
 	}
 	
 	// return the name of who has the most wins
-	return (wins.begin()->second > std::next(wins.begin(),1)->second) ? (wins.begin()->first) : (std::next(wins.begin(),1)->first);
+	if(wins.begin()->second >= std::next(wins.begin())->second || wins.size() == 1)
+		return wins.begin()->first;
+	else
+		return std::next(wins.begin())->first;
 }
 
 int Set::getGamesPlayed()
@@ -31,6 +34,7 @@ void Set::simulate()
 	bool p1GoesFirstThisGame = (first == 1);
 	while(!isSetOver())
 	{
+		srand(msSinceEpoch());
 		Game* game = new Game(p1,p2,FiveHundredOne,0,p1GoesFirstThisGame);
 		games.push_back(game);
 		game->simulate();
