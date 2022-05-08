@@ -144,7 +144,7 @@ int main()
 						mostFrequency = result.second;
 					}
 				}
-				std::cout << "\n\nMost frequent outcome from " << numMatches << " matches : " << mostFrequentResult << '\n';
+				std::cout << "\n\nMost frequent outcome from " << numMatches << " matches:  " << mostFrequentResult << '\n';
 			}
 			else // 301 sim results
 			{

@@ -34,14 +34,17 @@ int FiveHundredOneBoard::placeDart(const std::string& playerName, int accuracy, 
 	if(zone <= 0) // Bullseye = 0, OuterBullseye = -1
 	{
 		// a bit harder to hit the bullseye
-		if(r <= accuracy - 10)
+		int bullseyeCheck = accuracy - 10;
+		if(accuracy < 15)
+			bullseyeCheck = accuracy - accuracy*.5f;
+		if(r <= bullseyeCheck)
 		{
 			if(zone == Zone::Bullseye)
 				hitVal = 50; // hit inner bullseye
 			else
 				hitVal = 25; // hit outer bullseye
 		}
-		else if(r <= accuracy - 14)
+		else if(r <= bullseyeCheck + 10) // small chance to hit other bullseye
 		{
 			// have missed our bullseye but hit other bullseye instead
 			if(zone == Zone::Bullseye)
@@ -80,7 +83,9 @@ int FiveHundredOneBoard::placeDart(const std::string& playerName, int accuracy, 
 			// if you were going for a single, I think it's pretty unlikely to accidentally hit
 			// a double or treble
 			if(zone == Zone::Single)
-				bOffVertical = (rand() % 10) == 0; // but it's pretty easy to miss a treble or a double bOffVertical = rand() % 2;
+				bOffVertical = (rand() % 10) == 0; 
+			else
+				bOffVertical = rand() % 2; // but it's pretty easy to miss a treble or a double 
 
 			bOffHorizontal = (rand() % 3 == 0); // one in three chance of being off horizontal
 			// as in, you've missed the number you were going for

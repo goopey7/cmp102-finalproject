@@ -2,11 +2,6 @@
 
 #include "Set.h"
 
-void Set::addGame(Game* game)
-{
-	games.push_back(game);
-}
-
 std::string Set::getWinner()
 {
 	std::map<std::string,int> wins;

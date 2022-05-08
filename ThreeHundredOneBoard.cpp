@@ -29,8 +29,11 @@ int ThreeHundredOneBoard::placeDart(const std::string& playerName, int accuracy,
 	// if a bullseye is desired
 	if(zone == Zone::Bullseye)
 	{
+		int bullseyeCheck = accuracy - 10;
+		if(accuracy < 15)
+			bullseyeCheck = accuracy - accuracy*.5f;
 		// a bit harder to hit the bullseye
-		if(r <= accuracy - 10)
+		if(r <= bullseyeCheck)
 		{
 			hitVal = 50;
 		}

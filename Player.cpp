@@ -22,20 +22,6 @@ int Player::throwDart(int desiredPoints, Zone desiredZone, Zone* hitZone, std::v
 void Player::newGame(DartBoard* board)
 {
 	currentBoard = board;
-	boardsPlayed.push_back(currentBoard);
-}
-
-int Player::getWins()
-{
-	int wins = 0;
-	for(DartBoard* board : boardsPlayed)
-	{
-		if(board->getWinner() == name)
-		{
-			wins++;
-		}
-	}
-	return wins;
 }
 
 int Player::getPointsInCurrentGame()

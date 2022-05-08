@@ -7,7 +7,6 @@ class Set
 {
 	public:
 		Set(Player* p1, Player* p2);
-		void addGame(Game* game);
 		std::string getWinner();
 		int getGamesPlayed();
 

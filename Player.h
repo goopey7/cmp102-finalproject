@@ -12,7 +12,6 @@ class Player
 		~Player();
 
 		int throwDart(int desiredPoints, Zone desiredZone, Zone* hitZone = nullptr, std::vector<std::pair<int,Zone>>* throws = nullptr, ThrowError* error = nullptr);
-		int getWins();
 		int getPointsInCurrentGame();
 		void newGame(DartBoard* board);
 		const std::string& getName() const;
@@ -22,6 +21,5 @@ class Player
 		std::string name;
 		int successRate;
 		DartBoard* currentBoard = nullptr;
-		std::vector<DartBoard*> boardsPlayed;
 };
 
